@@ -1,0 +1,21 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.12
+   build:
+    commands:
+      - echo Building layer
+      - echo current folder $(pwd)
+      - cd layer/python
+      - pip install -r requirements.txt -t .
+      - cd ../..
+      - zip -r layer.zip layer
+  post_build:
+    commands:
+      - echo publish to s3
+      - aws s3 cp layer.zip s3://$TARGET_S3_BUCKET/layer.zip
+artifacts:
+  files:
+    - layer.zip
